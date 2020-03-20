@@ -49,10 +49,12 @@ public:
     ParListener(
             bool exit_on_lost_liveliness)
         : exit_on_lost_liveliness_(exit_on_lost_liveliness)
-    {}
+    {
+    }
 
     virtual ~ParListener() override
-    {}
+    {
+    }
 
     /**
      * This method is called when a new Participant is discovered, or a previously discovered participant
@@ -106,6 +108,7 @@ public:
                 " unauthorized participant " << info.guid << std::endl;
         }
     }
+
 #endif
 
 private:
@@ -119,10 +122,12 @@ public:
 
     PubListener()
         : matched_(0)
-    {}
+    {
+    }
 
     ~PubListener() override
-    {}
+    {
+    }
 
     void on_publication_matched(
             Publisher* /*publisher*/,
@@ -225,21 +230,22 @@ int main(
     }
 
     /* TODO - XMLProfileManager doesn't support DDS yet
-    if (xml_file)
-    {
+       if (xml_file)
+       {
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
-    }
-    */
+       }
+     */
 
     xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
 
-    ParticipantAttributes participant_attributes;
-    DomainParticipantFactory::get_instance()->get_default_participant_qos(participant_attributes);
-    participant_attributes.rtps.builtin.typelookup_config.use_server = true;
-    participant_attributes.rtps.builtin.domainId = seed % 230;
+    DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
+    DomainParticipantFactory::get_instance()->get_default_participant_qos(participant_qos);
+    participant_qos.participant_attr.rtps.builtin.typelookup_config.use_server = true;
+    participant_qos.participant_attr.rtps.builtin.domainId = seed % 230;
     ParListener participant_listener(exit_on_lost_liveliness);
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
+            DomainParticipantFactory::get_instance()->create_participant(participant_qos.participant_attr,
+                    &participant_listener);
 
     if (participant == nullptr)
     {
