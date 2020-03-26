@@ -51,7 +51,7 @@ TEST(ParticipantTests, ChangeDefaultParticipantQos)
 
     qos.entity_factory.autoenable_created_entities = false;
 
-    DomainParticipantFactory::get_instance()->set_default_participant_qos(qos);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(qos) == ReturnCode_t::RETCODE_OK);
     DomainParticipantQos pqos;
     DomainParticipantFactory::get_instance()->get_default_participant_qos(pqos);
 
@@ -69,7 +69,7 @@ TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
 
     qos.entity_factory.autoenable_created_entities = false;
 
-    participant.default_participant_qos(qos);
+    ASSERT_NO_THROW(participant.default_participant_qos(qos));
     ::dds::domain::qos::DomainParticipantQos pqos = participant.default_participant_qos();
 
     ASSERT_EQ(qos, pqos);
